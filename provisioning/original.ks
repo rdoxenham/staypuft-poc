@@ -1,12 +1,24 @@
 <%#
 kind: provision
-name: Kickstart RHEL default
+name: Kickstart default
 oses:
 - RedHat 6
+- CentOS 4
+- CentOS 5
+- CentOS 6
+- CentOS 7
+- Fedora 16
+- Fedora 17
+- Fedora 18
+- Fedora 19
+- Fedora 20
 %>
 <%
+  rhel_compatible = @host.operatingsystem.family == 'Redhat' && @host.operatingsystem.name != 'Fedora'
   os_major = @host.operatingsystem.major.to_i
+  realm_compatible = (@host.operatingsystem.name == "Fedora" && os_major >= 20) || (rhel_compatible && os_major >= 7)
   # safemode renderer does not support unary negation
+  realm_incompatible = (@host.operatingsystem.name == "Fedora" && os_major < 20) || (rhel_compatible && os_major < 7)
   pm_set = @host.puppetmaster.empty? ? false : true
   puppet_enabled = pm_set || @host.params['force-puppet']
 %>
@@ -21,25 +33,32 @@ rootpw --iscrypted <%= root_pass %>
 firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
 authconfig --useshadow --passalgo=sha256 --kickstart
 timezone --utc <%= @host.params['time-zone'] || 'UTC' %>
-
-<% if os_major >= 7 && @host.info["parameters"]["realm"] && @host.otp && @host.realm -%>
-realm join --one-time-password=<%= @host.otp %> <%= @host.realm %>
+<% if rhel_compatible && os_major > 4 -%>
+services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables_jf,xfs,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd,restorecond,mcstrans,rhnsd,yum-updatesd
 <% end -%>
 
-<% if os_major > 4 -%>
-services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables_jf,xfs,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd,restorecond,mcstrans,rhnsd,yum-updatesd
+<% if realm_compatible && @host.info["parameters"]["realm"] && @host.otp && @host.realm -%>
+realm join --one-time-password='<%= @host.otp %>' <%= @host.realm %>
+<% end -%>
 
+<% if @host.operatingsystem.name == 'Fedora' -%>
+repo --name=fedora-everything --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
+<% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
+repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
+<% end -%>
 <% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
 repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
 <% end -%>
-<% end -%>
 
+<% if @host.operatingsystem.name == 'Fedora' and os_major <= 16 -%>
+# Bootloader exception for Fedora 16:
+bootloader --append="nofb quiet splash=quiet <%=ks_console%>" <%= grub_pass %>
+part biosboot --fstype=biosboot --size=1
+<% else -%>
 bootloader --location=mbr --append="nofb quiet splash=quiet" <%= grub_pass %>
-<% if os_major == 5 -%>
-key --skip
 <% end -%>
-
 
 <% if @dynamic -%>
 %include /tmp/diskpart.cfg
@@ -55,14 +74,11 @@ yum
 dhclient
 ntp
 wget
-@Core
 screen
 nano
+@Core
 <% if puppet_enabled %>
 puppet
-<% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
-puppetlabs-release
-<% end -%>
 <% end -%>
 %end
 
@@ -93,20 +109,15 @@ echo "updating system time"
 /usr/sbin/ntpdate -sub <%= @host.params['ntp-server'] || '0.fedora.pool.ntp.org' %>
 /usr/sbin/hwclock --systohc
 
-<%= snippet 'redhat_register' %>
-
-<% if @host.info["parameters"]["realm"] && @host.otp && @host.realm && @host.realm.realm_type == "FreeIPA" && os_major <= 6 -%>
+<% if realm_incompatible && @host.info["parameters"]["realm"] && @host.otp && @host.realm && @host.realm.realm_type == "FreeIPA" -%>
 <%= snippet "freeipa_register" %>
 <% end -%>
 
 # update all the base packages from the updates repository
-wget -O /etc/yum.repos.d/compute.repo http://fqdn_location/repos/latest/openstack.repo
+wget -O /etc/yum.repos.d/openstack.repo http://fqdn_location/repos/latest/openstack.repo
 yum -t -y -e 0 update
 
 <% if puppet_enabled %>
-# and add the puppet package
-yum -t -y -e 0 install puppet
-
 echo "Configuring puppet"
 cat > /etc/puppet/puppet.conf << EOF
 <%= snippet 'puppet.conf' %>
@@ -128,3 +139,4 @@ wget -q -O /dev/null --no-check-certificate <%= foreman_url %>
 exit 0
 
 %end
+
