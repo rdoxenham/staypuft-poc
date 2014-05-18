@@ -7,7 +7,6 @@
 
 import os
 import sys
-import argparse
 import getpass
 import subprocess
 
