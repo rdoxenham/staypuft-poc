@@ -40,9 +40,10 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 
-[rh-optional]
-name=Red Hat Enterprise Linux 6 Optional Packages
-baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-optional-6
-enabled=1
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+#TODO (rdo) Check if this is really required...
+#[rh-optional]
+#name=Red Hat Enterprise Linux 6 Optional Packages
+#baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-optional-6
+#enabled=1
+#gpgcheck=1
+#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
