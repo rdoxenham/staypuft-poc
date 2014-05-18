@@ -1,0 +1,48 @@
+[rhel6]
+name=Red Hat Enterprise Linux 6
+baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-6
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rhel-lb]
+name=Red Hat Enterprise Linux Load Balancer
+baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-lb-6
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[mrg-m]
+name=Red Hat MRG-Messaging
+baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-6-mrg-messaging-2
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rhos4]
+name=Red Hat Enterprise Linux OpenStack Platform 4.0
+baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-6-ost-4
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rhscl-1]
+name=Red Hat Software Collections 1.0
+baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-6-rhscl-1
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rh-common]
+name=Red Hat Enterprise Linux 6 Common Packages
+baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-rh-common-6
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rh-optional]
+name=Red Hat Enterprise Linux 6 Optional Packages
+baseurl=http://fqdn:8080/repos/latest/rhel-x86_64-server-optional-6
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release

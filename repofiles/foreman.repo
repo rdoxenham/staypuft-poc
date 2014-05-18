@@ -1,0 +1,34 @@
+[rhel6]
+name=Red Hat Enterprise Linux 6
+baseurl=file:///var/www/html/repos/latest/rhel-x86_64-server-6
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[foreman]
+name=Foreman StayPuft Installer
+baseurl=file:///var/www/html/repos/latest/foreman
+enabled=1
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rhscl-1]
+name=Red Hat Software Collections 1.0
+baseurl=file:///var/www/html/repos/latest/rhel-x86_64-server-6-rhscl-1
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rh-common]
+name=Red Hat Enterprise Linux 6 Common Packages
+baseurl=file:///var/www/html/repos/latest/rhel-x86_64-server-rh-common-6
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[rh-optional]
+name=Red Hat Enterprise Linux 6 Optional Packages
+baseurl=file:///var/www/html/repos/latest/rhel-x86_64-server-optional-6
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
