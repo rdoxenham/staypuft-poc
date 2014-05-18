@@ -138,7 +138,8 @@ def begin_install(fqdn):
 			['yum', '-t', '-y', '-e', '0', 'install', 'foreman-installer-staypuft'],
 			   stdout=devnull, stderr=devnull)
 	except: die("STAYPUFT INSTALL")
-	print "INFO: Configuration complete. See files in /root/staypuft_files/"
+	print "\nINFO: Configuration complete. See files in /root/staypuft_files/"
+	print "INFO: Installation media can be found at: https://%s:8080/repos/rheldvd-el6" % fqdn
 	print "INFO: Repositories are available at: http://%s:8080/repos" % fqdn
 	print "SUCCESS: Staypuft is ready to be configured, run 'staypuft-installer'"
 
