@@ -1,4 +1,4 @@
-staypuft-poc: Provisioning Node Config Tool
+staypuft-poc: PoC Config Tool
 ============
 
 This tool was designed to help you get started with Red Hat's new Foreman-based OpenStack deployment tool, codenamed Staypuft. To get started very quickly and to enable bare-metal provisioning of OpenStack nodes, this script automates the configuration of the following-
@@ -56,8 +56,7 @@ Next, you're ready to start using the deployment tool. Simply run the script and
 
 	# ./staypuft_poc.py
 
-	StayPuft OpenStack PoC Configuration Script v0.1
-	Rhys Oxenham <roxenham@redhat.com>
+	StayPuft OpenStack PoC Configuration Script
 	INFO: Configuring system...
 
 	Enter provisioning FQDN of this host:

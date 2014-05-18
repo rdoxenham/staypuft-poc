@@ -146,7 +146,6 @@ if __name__ == "__main__":
 	check_root()
 	devnull = open('/dev/null', 'w')
 	print "\nStayPuft OpenStack PoC Configuration Script v0.1"
-	print "Rhys Oxenham <roxenham@redhat.com>"
 	fqdn = configure_system()
 	create_ext_repos(fqdn)
 	create_int_repos(fqdn)
