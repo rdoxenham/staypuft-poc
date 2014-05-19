@@ -71,43 +71,40 @@ def configure_system():
 	return fqdn
 
 def create_ext_repos(fqdn):
-	print "INFO: Creating ISO and package repositories..."
+	print "\nINFO: Creating ISO and package repositories..."
 	try:
 		subprocess.check_call(
-			['mkdir', '-p', '/mnt/el6'],
+			['mkdir', '-p', '/mnt/rheldvd-el6'],
 			   stdout=devnull, stderr=devnull)
 		subprocess.check_call(
-			['mount', '-o', 'loop', 'iso/rhel-server-6.5-x86_64-dvd.iso', '/mnt/el6'],
+			['mount', '-o', 'loop', 'iso/rhel-server-6.5-x86_64-dvd.iso', '/mnt/rheldvd-el6'],
 			   stdout=devnull, stderr=devnull)
 		subprocess.check_call(
-			['mkdir', '-p', '/var/www/html/repos/rheldvd-el6'],
+			['mkdir', '-p', '/var/www/html/repos'],
 			   stdout=devnull, stderr=devnull)
 		subprocess.check_call(
-			['cp', '-rf', '/mnt/el6/*', '/var/www/html/repos/rheldvd-el6/.'],
+			['cp', '-rf', '/mnt/rheldvd-el6/', '/var/www/html/repos/.'],
 			   stdout=devnull, stderr=devnull)
 		subprocess.check_call(
-			['umount', '/mnt/el6'],
+			['umount', '/mnt/rheldvd-el6'],
 			   stdout=devnull, stderr=devnull)
 		subprocess.check_call(
 			['mkdir', '-p', '/var/www/html/repos/latest'],
 			   stdout=devnull, stderr=devnull)
 		subprocess.check_call(
-			['cp', '-rf', 'repos/*', '/var/www/html/repos/latest'],
+			['cp', '-rf', 'repos/.', '/var/www/html/repos/latest'],
 			   stdout=devnull, stderr=devnull)
 		with open("/var/www/html/repos/latest/openstack.repo", "wt") as fout:
 			with open("repofiles/openstack.repo", "rt") as fin:
 				for line in fin:
 					fout.write(line.replace('fqdn', fqdn))
-		subprocess.check_call(
-			['chown', '-R', 'apache:apache', '/var/www/html'],
-			   stdout=devnull, stderr=devnull)
 	except: die("CREATING ISO REPOS")
 
 def create_int_repos():
 	print "INFO: Setting up local repositories..."
 	try:
 		subprocess.check_call(
-			['cp', '/var/www/html/repos/latest/foreman.repo', '/etc/yum.repos.d/'],
+			['cp', 'repofiles/foreman.repo', '/etc/yum.repos.d/'],
 			   stdout=devnull, stderr=devnull)
 	except: die("INTERNAL REPOS")
 
@@ -122,7 +119,9 @@ def configure_vhost(fqdn):
 			with open("config/repos.conf", "rt") as fin:
 				for line in fin:
 					fout.write(line.replace('fqdn', fqdn))
-
+		subprocess.check_call(
+			['chown', '-R', 'apache:apache', '/var/www/'],
+			   stdout=devnull, stderr=devnull)
 		subprocess.check_call(
 			['service', 'httpd', 'start'],
 			   stdout=devnull, stderr=devnull)
