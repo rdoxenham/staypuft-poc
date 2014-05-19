@@ -148,6 +148,6 @@ if __name__ == "__main__":
 	print "\nStayPuft OpenStack PoC Configuration Script v0.1"
 	fqdn = configure_system()
 	create_ext_repos(fqdn)
-	create_int_repos(fqdn)
+	create_int_repos()
 	configure_vhost(fqdn)
 	begin_install(fqdn)
